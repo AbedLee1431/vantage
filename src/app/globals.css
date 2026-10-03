@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+/* Centralized design tokens (ADR-010). A rebrand = this block + src/lib/brand.ts. */
+@theme {
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Brand chrome: deep navy */
+  --color-brand-950: #0f172a;
+  --color-brand-900: #1e293b;
+  --color-brand-800: #334155;
+
+  /* Accent: teal (CTAs, positive trends, highlights) */
+  --color-accent-700: #0f766e;
+  --color-accent-600: #0d9488;
+  --color-accent-500: #14b8a6;
+  --color-accent-100: #ccfbf1;
+
+  /* Demo data badge: violet (distinct from real-data color) */
+  --color-demo-700: #6d28d9;
+  --color-demo-600: #7c3aed;
+  --color-demo-100: #ede9fe;
+}
+
+body {
+  background-color: var(--color-slate-50);
+  color: var(--color-slate-900);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Report print output (browser Save-as-PDF; no server PDF stack — ADR-016):
+   chrome-free, expanded disclosures, ink-safe. */
+@media print {
+  aside,
+  header,
+  nav,
+  .print\:hidden {
+    display: none !important;
+  }
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+  body {
+    background: #fff;
+  }
+  details {
+    display: block;
+  }
+  details > *:not(summary) {
+    display: block !important;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .bg-brand-950,
+  .bg-accent-600 {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

@@ -1,0 +1,27 @@
+# Local development database for Vantage.
+# Start Docker Desktop first, then: docker compose up -d postgres
+# Matches DATABASE_URL in .env.example.
+
+name: vantage
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: vantage-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: vantage
+      POSTGRES_PASSWORD: vantage
+      POSTGRES_DB: vantage
+    ports:
+      - "5432:5432"
+    volumes:
+      - vantage-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vantage -d vantage"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  vantage-postgres-data:

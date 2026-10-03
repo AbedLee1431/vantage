@@ -1,0 +1,12 @@
+.next
+node_modules
+pnpm-lock.yaml
+docs
+TrendTrack
+graphify-out
+coverage
+src/generated
+# Prettier formats code, not prose (docs/ already ignored above)
+*.md
+# Next.js owns tsconfig.json formatting (it rewrites it on schema changes)
+tsconfig.json

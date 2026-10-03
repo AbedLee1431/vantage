@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: vantage
+          POSTGRES_PASSWORD: vantage
+          POSTGRES_DB: vantage_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U vantage -d vantage_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Setup test database
+        run: |
+          pnpm exec prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://vantage:vantage@localhost:5432/vantage_test
+
+      - name: Test
+        run: pnpm test
+        env:
+          DATABASE_URL: postgresql://vantage:vantage@localhost:5432/vantage_test
+
+      - name: Build
+        run: pnpm build
+        env:
+          DATABASE_URL: postgresql://vantage:vantage@localhost:5432/vantage_test
+          AUTH_SECRET: ci-test-secret-not-for-production

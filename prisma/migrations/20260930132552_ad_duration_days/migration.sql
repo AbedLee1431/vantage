@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Ad" ADD COLUMN     "durationDays" INTEGER NOT NULL DEFAULT 0;
